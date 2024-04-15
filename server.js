@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 
 const headers = require('./headers')
+const handleSuccess = require('./handleSuccess')
 
 dotenv.config({path:'./config.env'})
 
@@ -43,12 +44,7 @@ const requestListener = async(req,res) => {
     if (req.url == '/posts' && req.method == 'GET') {
         try {
             const posts = await Post.find()
-            res.writeHead(200,headers)
-            res.write(JSON.stringify({
-                'status': 'success',
-                'data': posts
-            }))
-            res.end()    
+            handleSuccess(res,posts)
         } catch (error) {
             res.writeHead(400,headers)
             res.write(JSON.stringify({
@@ -67,11 +63,7 @@ const requestListener = async(req,res) => {
                     'image': data.image,
                     'likes': data.likes
                 })
-                res.write(JSON.stringify({
-                    'status': true,
-                    'data': newPost
-                }))
-                res.end()
+                handleSuccess(res,newPost)
             } catch (error) {
                 res.writeHead(400,headers)
                 res.write(JSON.stringify({
@@ -88,13 +80,7 @@ const requestListener = async(req,res) => {
                 const data = JSON.parse(body)
                 await Post.findByIdAndUpdate(id,data,{new:true})
                 .then(updated => {
-                    console.log(updated)
-                    res.writeHead(200,headers)
-                    res.write(JSON.stringify({
-                        'status': true,
-                        'data': updated
-                    }))
-                    res.end()
+                    handleSuccess(res,updated)
                 })
                 .catch(error => {
                     res.writeHead(400,headers)
@@ -119,12 +105,7 @@ const requestListener = async(req,res) => {
             await Post.findByIdAndDelete(id)
             .then(deleted => {
                 if (deleted != null) {
-                    res.writeHead(200,headers)
-                    res.write(JSON.stringify({
-                        'status': true,
-                        'message': '已刪掉' + deleted
-                    }))
-                    res.end()
+                    handleSuccess(res,deleted)
                 } else {
                     res.writeHead(404,headers)
                     res.write(JSON.stringify({
@@ -154,12 +135,7 @@ const requestListener = async(req,res) => {
         try {
             await Post.deleteMany()
             .then(result => {
-                res.writeHead(200,headers)
-                res.write(JSON.stringify({
-                    'status': true,
-                    'message': 'deletedCount:' + result.deletedCount
-                }))
-                res.end()
+                handleSuccess(res,result.deletedCount)
             })
             .catch(error => {
                 res.writeHead(400,headers)
