@@ -1,7 +1,8 @@
 const http = require('http')
 const dotenv = require('dotenv')
 const mongoose = require('mongoose')
-const { type } = require('os')
+
+const headers = require('./headers')
 
 dotenv.config({path:'./config.env'})
 
@@ -32,13 +33,6 @@ const postSchema = new mongoose.Schema({
 })
 
 const Post = mongoose.model('Post',postSchema)
-
-const headers = {
-    'Access-Control-Allow-Headers': 'Content-Type,Authorization,Content-Length,X-Requested-With',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'PATCH,POST,GET,OPTIONS,DELETE',
-    'Content-Type': 'application/json'
-}
 
 const requestListener = async(req,res) => {
     let body = ''
