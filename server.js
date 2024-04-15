@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 
 const headers = require('./headers')
+const postSchema = require('./model/post')
 const handleSuccess = require('./handleSuccess')
 
 dotenv.config({path:'./config.env'})
@@ -11,27 +12,6 @@ mongoose
 .connect(process.env.DB)
 .then(()=>console.log('You successfully connected to MongoDB!'))
 .catch((error)=>console.log(error))
-
-const postSchema = new mongoose.Schema({
-    content: {
-        type: String,
-        required: [true,'content未填寫']
-    },
-    image: {
-        type: String,
-        default: '',
-    },
-    name: {
-        type: String,
-        required: [true, 'name未填寫']
-    },
-    likes: {
-        type: Number,
-        default: 0
-    }
-},{
-    timestamps: true
-})
 
 const Post = mongoose.model('Post',postSchema)
 
