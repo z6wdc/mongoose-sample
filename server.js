@@ -51,7 +51,16 @@ const requestListener = async (req, res) => {
                 const data = JSON.parse(body)
                 await Post.findByIdAndUpdate(id, data, { new: true, runValidators: true })
                     .then(updated => {
-                        handleSuccess(res, updated)
+                        if (updated != null) {
+                            handleSuccess(res, updated)
+                        } else {
+                            res.writeHead(404, headers)
+                            res.write(JSON.stringify({
+                                'status': false,
+                                'message': '無此ID'
+                            }))
+                            res.end()
+                        }
                     })
                     .catch(error => {
                         handleError(res, error)
